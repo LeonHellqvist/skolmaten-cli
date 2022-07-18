@@ -8,6 +8,23 @@
   </p>
 </div>
 
+<!-- KOMMA IGÅNG -->
+## Hur man använder
+
+För att välja din matsal måste du ha dess id. För att få fram id kör:
+```sh
+skolmaten-cli sök <namn på matsal>
+```
+Då kommer du få upp en lista av alla matsalar som matchar sin sökning.
+Hitta din matsal och kopiera dess id. Sedan kör detta för att sätta id:
+```sh
+skolmaten-cli id <id>
+```
+Efter det är det bara att köra detta för att få fram matsedeln:
+```sh
+skolmaten-cli
+```
+
 
 
 <!-- KOMMA IGÅNG -->
