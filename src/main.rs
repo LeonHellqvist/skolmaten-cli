@@ -5,6 +5,7 @@ use serde_derive::Deserialize;
 use serde_derive::Serialize;
 use serde_json::Value;
 use std::io::prelude::*;
+use std::fs;
 
 pub type RootStation = Vec<Root2>;
 
@@ -90,13 +91,26 @@ pub struct Province {
 }
 
 const ID_PATH: &str = "skolmaten-cli-id.txt";
+const HELP_MESSAGE: &str = "Du kan använda funktionerna:\nsök <matsal> - söker efter en matsal\nid <matsals-id> - sätter din matsal från id";
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
 
+
     if args.len() == 1 {
-        let _print_menu = print_menu();
-    } else {
+
+        if fs::metadata(ID_PATH).is_ok() == true {
+            let _print_menu = print_menu();
+        } 
+
+        if fs::metadata(ID_PATH).is_ok() == false {
+            println!("{}", HELP_MESSAGE);
+        }
+
+    }
+
+    if args.len() > 1 {
+
         let query: &String = &args[1];
 
         if query == "sök" {
@@ -106,9 +120,8 @@ fn main() {
             let _id = set_id(&args);
         }
 
-        println!("Du kan använda funktionerna:");
-        println!("sök <matsal> - söker efter en matsal");
-        println!("id <matsals-id> - sätter din matsal från id");
+        println!("{}", HELP_MESSAGE);
+
     }
 }
 
