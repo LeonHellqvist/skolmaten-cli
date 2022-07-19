@@ -43,17 +43,17 @@ pub struct Menu {
 #[serde(rename_all = "camelCase")]
 pub struct Week {
     pub days: Vec<Day>,
-    pub week_of_year: i64,
-    pub year: i64,
+    pub week_of_year: u8,
+    pub year: i16,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Day {
     pub reason: Option<String>,
-    pub month: i64,
-    pub day: i64,
-    pub year: i64,
+    pub month: u8,
+    pub day: u8,
+    pub year: i16,
     pub meals: Option<Vec<Meal>>,
 }
 
@@ -151,6 +151,8 @@ async fn print_menu() -> Result<(), Error> {
         .await?
         .json::<Root>()
         .await?;
+
+    println!("{:?}", resp);
 
     let day_names = ["Mån", "Tis", "Ons", "Tor", "Fre", "Lör", "Sön"];
     let day_today: usize = (local.weekday().number_from_monday() - 1)
