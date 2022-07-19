@@ -1,11 +1,10 @@
 use chrono::prelude::*;
 use colored::*;
 use reqwest::{Client, Error};
-use serde_derive::Deserialize;
-use serde_derive::Serialize;
+use serde_derive::{Deserialize, Serialize};
 use serde_json::Value;
 use std::io::prelude::*;
-use std::fs;
+use std::{fs, env, process};
 
 pub type RootStation = Vec<Root2>;
 
@@ -94,7 +93,7 @@ const ID_PATH: &str = "skolmaten-cli-id.txt";
 const HELP_MESSAGE: &str = "Du kan använda funktionerna:\nsök <matsal> - söker efter en matsal\nid <matsals-id> - sätter din matsal från id";
 
 fn main() {
-    let args: Vec<String> = std::env::args().collect();
+    let args: Vec<String> = env::args().collect();
 
 
     if args.len() == 1 {
@@ -127,7 +126,7 @@ fn main() {
 
 #[tokio::main]
 async fn print_menu() -> Result<(), Error> {
-    let mut file = std::fs::File::open(ID_PATH).unwrap();
+    let mut file = fs::File::open(ID_PATH).unwrap();
     let mut contents = String::new();
     file.read_to_string(&mut contents).unwrap();
 
@@ -151,8 +150,6 @@ async fn print_menu() -> Result<(), Error> {
         .await?
         .json::<Root>()
         .await?;
-
-    println!("{:?}", resp);
 
     let day_names = ["Mån", "Tis", "Ons", "Tor", "Fre", "Lör", "Sön"];
     let day_today: usize = (local.weekday().number_from_monday() - 1)
@@ -216,7 +213,7 @@ async fn search(args: &Vec<String>) -> Result<(), Error> {
             }
         }
     }
-    std::process::exit(1);
+    process::exit(1);
 }
 
 fn set_id(args: &Vec<String>) -> std::io::Result<()> {
@@ -227,8 +224,8 @@ fn set_id(args: &Vec<String>) -> std::io::Result<()> {
         let query: &String = &args[2];
         println!("Sätter din matsal till \"{}\"", query);
 
-        let mut file = std::fs::File::create(ID_PATH).expect("create failed");
+        let mut file = fs::File::create(ID_PATH).expect("create failed");
         file.write_all(query.as_bytes()).expect("write failed");
     }
-    std::process::exit(1);
+    process::exit(1);
 }
