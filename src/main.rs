@@ -89,6 +89,8 @@ pub struct Province {
     pub name: String,
 }
 
+const ID_PATH: &str = "skolmaten-cli-id.txt";
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
 
@@ -112,8 +114,7 @@ fn main() {
 
 #[tokio::main]
 async fn print_menu() -> Result<(), Error> {
-    let id_path = "skolmaten-cli-id.txt";
-    let mut file = std::fs::File::open(id_path).unwrap();
+    let mut file = std::fs::File::open(ID_PATH).unwrap();
     let mut contents = String::new();
     file.read_to_string(&mut contents).unwrap();
 
@@ -211,9 +212,7 @@ fn set_id(args: &Vec<String>) -> std::io::Result<()> {
         let query: &String = &args[2];
         println!("Sätter din matsal till \"{}\"", query);
 
-        let id_path = "skolmaten-cli-id.txt";
-
-        let mut file = std::fs::File::create(id_path).expect("create failed");
+        let mut file = std::fs::File::create(ID_PATH).expect("create failed");
         file.write_all(query.as_bytes()).expect("write failed");
     }
     std::process::exit(1);
