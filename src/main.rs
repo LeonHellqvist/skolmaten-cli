@@ -1,10 +1,10 @@
 use chrono::prelude::*;
 use colored::*;
 use reqwest::{Client, Error};
-use serde_derive::Deserialize;
-use serde_derive::Serialize;
+use serde_derive::{Deserialize, Serialize};
 use serde_json::Value;
 use std::io::prelude::*;
+use std::{fs, env, process};
 
 pub type RootStation = Vec<Root2>;
 
@@ -42,17 +42,17 @@ pub struct Menu {
 #[serde(rename_all = "camelCase")]
 pub struct Week {
     pub days: Vec<Day>,
-    pub week_of_year: i64,
-    pub year: i64,
+    pub week_of_year: u8,
+    pub year: i16,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Day {
     pub reason: Option<String>,
-    pub month: i64,
-    pub day: i64,
-    pub year: i64,
+    pub month: u8,
+    pub day: u8,
+    pub year: i16,
     pub meals: Option<Vec<Meal>>,
 }
 
@@ -89,12 +89,27 @@ pub struct Province {
     pub name: String,
 }
 
+const ID_PATH: &str = "skolmaten-cli-id.txt";
+const HELP_MESSAGE: &str = "Du kan använda funktionerna:\nsök <matsal> - söker efter en matsal\nid <matsals-id> - sätter din matsal från id";
+
 fn main() {
-    let args: Vec<String> = std::env::args().collect();
+    let args: Vec<String> = env::args().collect();
+
 
     if args.len() == 1 {
-        let _print_menu = print_menu();
-    } else {
+
+        if fs::metadata(ID_PATH).is_ok() == true {
+            let _print_menu = print_menu();
+        } 
+
+        if fs::metadata(ID_PATH).is_ok() == false {
+            println!("{}", HELP_MESSAGE);
+        }
+
+    }
+
+    if args.len() > 1 {
+
         let query: &String = &args[1];
 
         if query == "sök" {
@@ -104,16 +119,14 @@ fn main() {
             let _id = set_id(&args);
         }
 
-        println!("Du kan använda funktionerna:");
-        println!("sök <matsal> - söker efter en matsal");
-        println!("id <matsals-id> - sätter din matsal från id");
+        println!("{}", HELP_MESSAGE);
+
     }
 }
 
 #[tokio::main]
 async fn print_menu() -> Result<(), Error> {
-    let id_path = "skolmaten-cli-id.txt";
-    let mut file = std::fs::File::open(id_path).unwrap();
+    let mut file = fs::File::open(ID_PATH).unwrap();
     let mut contents = String::new();
     file.read_to_string(&mut contents).unwrap();
 
@@ -200,7 +213,7 @@ async fn search(args: &Vec<String>) -> Result<(), Error> {
             }
         }
     }
-    std::process::exit(1);
+    process::exit(1);
 }
 
 fn set_id(args: &Vec<String>) -> std::io::Result<()> {
@@ -211,10 +224,8 @@ fn set_id(args: &Vec<String>) -> std::io::Result<()> {
         let query: &String = &args[2];
         println!("Sätter din matsal till \"{}\"", query);
 
-        let id_path = "skolmaten-cli-id.txt";
-
-        let mut file = std::fs::File::create(id_path).expect("create failed");
+        let mut file = fs::File::create(ID_PATH).expect("create failed");
         file.write_all(query.as_bytes()).expect("write failed");
     }
-    std::process::exit(1);
+    process::exit(1);
 }
