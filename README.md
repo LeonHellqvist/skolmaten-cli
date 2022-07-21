@@ -43,7 +43,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 1. Klona den här repon
    ```sh
-   git clone https://github.com/LeonHellqvist/unikum-tools.git
+   git clone https://github.com/LeonHellqvist/skolmaten-cli.git
    ```
 2. Gå in i projektmappen
    ```sh
