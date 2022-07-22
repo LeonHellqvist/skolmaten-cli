@@ -1,7 +1,7 @@
 <div id="top"></div>
 <div align="center">
 
-<h3 align="center">Skolmaten-cli</h3>
+<h2 align="center">Skolmaten-cli</h2>
 
   <p align="center">
     <b>Se matsedeln direkt från terminalen</b>
