@@ -151,7 +151,7 @@ async fn print_menu() -> Result<(), Error> {
         .json::<Root>()
         .await?;
 
-    let day_names = ["Mån", "Tis", "Ons", "Tor", "Fre", "Lör", "Sön"];
+    const DAY_NAMES: [&str; 7] = ["Mån", "Tis", "Ons", "Tor", "Fre", "Lör", "Sön"];
     let day_today: usize = (local.weekday().number_from_monday() - 1)
         .try_into()
         .unwrap();
@@ -165,9 +165,9 @@ async fn print_menu() -> Result<(), Error> {
                     if i == 0 {
                         let day_name: ColoredString;
                         if day_number == day_today {
-                            day_name = day_names[day_number].bright_blue();
+                            day_name = DAY_NAMES[day_number].bright_blue();
                         } else {
-                            day_name = day_names[day_number].blue();
+                            day_name = DAY_NAMES[day_number].blue();
                         }
                         println!("{}: {}", day_name, meal.value);
                     } else {
@@ -176,7 +176,7 @@ async fn print_menu() -> Result<(), Error> {
                 }
             } else {
                 let reason = day.reason.unwrap();
-                println!("{}: {}", day_names[day_number], reason);
+                println!("{}: {}", DAY_NAMES[day_number], reason);
             }
             println!("{}", "------------------------------------------".black());
             day_number += 1;
