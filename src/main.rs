@@ -206,8 +206,8 @@ async fn search(args: &Vec<String>) -> Result<(), Error> {
             .await?
             .json::<RootStation>()
             .await?;
-        for municipally in resp {
-            for station in municipally.s {
+        for municipality in resp {
+            for station in municipality.s {
                 if (station.n)
                     .to_lowercase()
                     .contains(query.to_lowercase().as_str())
