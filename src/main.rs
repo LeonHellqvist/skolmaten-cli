@@ -161,14 +161,18 @@ async fn print_menu() -> Result<(), Error> {
         let mut day_number = 0;
         for day in week.days {
             if day.meals.is_some() {
-                for meal in day.meals.unwrap() {
-                    let day_name: ColoredString;
-                    if day_number == day_today {
-                        day_name = day_names[day_number].bright_blue();
+                for (i, meal) in day.meals.unwrap().into_iter().enumerate() {
+                    if i == 0 {
+                        let day_name: ColoredString;
+                        if day_number == day_today {
+                            day_name = day_names[day_number].bright_blue();
+                        } else {
+                            day_name = day_names[day_number].blue();
+                        }
+                        println!("{}: {}", day_name, meal.value);
                     } else {
-                        day_name = day_names[day_number].blue();
+                        println!("     {}", meal.value);
                     }
-                    println!("{}: {}", day_name, meal.value);
                 }
             } else {
                 let reason = day.reason.unwrap();
