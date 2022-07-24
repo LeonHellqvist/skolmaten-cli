@@ -4,7 +4,7 @@ use reqwest::{Client, Error};
 use serde_derive::{Deserialize, Serialize};
 use serde_json::Value;
 use std::io::prelude::*;
-use std::{fs, env, process};
+use std::{fs, env, process, io};
 
 pub type RootStation = Vec<Root2>;
 
@@ -206,30 +206,73 @@ async fn search(args: &Vec<String>) -> Result<(), Error> {
             .await?
             .json::<RootStation>()
             .await?;
+
+        let mut result_amount: u32 = 0;
+        let mut result_id: Vec<i64> = Vec::new();
+
         for municipality in resp {
             for station in municipality.s {
                 if (station.n)
                     .to_lowercase()
                     .contains(query.to_lowercase().as_str())
                 {
-                    println!("{}, ID: {}", station.n, station.i);
+                    result_amount = result_amount + 1;
+                    result_id.push(station.i);
+                    println!("{}. {}, ID: {}", result_amount, station.n, station.i);
                 }
             }
+        }
+
+        print!("Skriv in ett matsalsnummer för att sätta din matsal, alternativt tryck [Enter] för lämna: ");
+
+        io::stdout().flush();
+
+        let mut selected_station = String::new();
+
+        io::stdin().read_line(&mut selected_station)
+            .ok()
+            .expect("Couldn't read line");
+
+        
+        selected_station = selected_station.chars().filter(|c| c.is_digit(10)).collect();
+
+        let selected_station_int: u32 = match selected_station.parse::<u32>() {
+            Err(_) => process::exit(1),
+            _ => selected_station.trim().parse::<u32>().unwrap().try_into().unwrap()
+        };
+
+        match result_id.get(selected_station_int as usize - 1) {
+            None => exit_program("Nummeret var utanför gränsen"),
+            _ => write_id_file(&result_id[selected_station_int as usize - 1].to_string()),
         }
     }
     process::exit(1);
 }
 
-fn set_id(args: &Vec<String>) -> std::io::Result<()> {
+fn write_id_file(id: &String) {
+
+    println!("Sätter din matsal till \"{}\"", id);
+
+    let mut file = fs::File::create(ID_PATH).expect("create failed");
+    file.write_all(id.as_bytes()).expect("write failed");
+
+    process::exit(1);
+}
+
+fn set_id(args: &Vec<String>) {
     if args.len() != 3 {
         println!("Du måste ange ett matsals-id");
         println!("Använd: ./skolmaten id <matsals-id>");
     } else {
-        let query: &String = &args[2];
-        println!("Sätter din matsal till \"{}\"", query);
-
-        let mut file = fs::File::create(ID_PATH).expect("create failed");
-        file.write_all(query.as_bytes()).expect("write failed");
+        write_id_file(&args[2]);
     }
     process::exit(1);
+}
+
+fn exit_program(message: &str) {
+
+    println!("Error: {}", message);
+
+    process::exit(1);
+
 }
