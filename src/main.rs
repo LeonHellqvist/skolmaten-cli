@@ -271,7 +271,7 @@ fn set_id(args: &Vec<String>) {
 
 fn exit_program(message: &str) {
 
-    println!("Error: {}", message);
+    println!("{}: {}", "Error".red(), message);
 
     process::exit(1);
 
