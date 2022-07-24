@@ -225,7 +225,7 @@ async fn search(args: &Vec<String>) -> Result<(), Error> {
 
         print!("Skriv in ditt matsalsnummer, eller tryck [Enter] för att lämna: ");
 
-        io::stdout().flush().expect("Gick inte att flush stdout");
+        io::stdout().flush().expect("Could not flush stdout");
 
         let mut selected_station = String::new();
 
