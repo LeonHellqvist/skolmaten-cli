@@ -234,12 +234,18 @@ async fn search(args: &Vec<String>) -> Result<(), Error> {
             .expect("Couldn't read line");
 
         
+        if selected_station.as_bytes().len() == 1 { 
+            process::exit(1);
+        }
+
         selected_station = selected_station.chars().filter(|c| c.is_digit(10)).collect();
 
-        let selected_station_int: u32 = match selected_station.parse::<u32>() {
-            Err(_) => process::exit(1),
-            _ => selected_station.trim().parse::<u32>().unwrap().try_into().unwrap()
-        };
+        let mut selected_station_int: u32 = 0;
+
+        match selected_station.parse::<u32>() {
+            Err(_) => exit_program("Nummeret du angav var ogiltigt"),
+            _ => selected_station_int = selected_station.trim().parse::<u32>().unwrap().try_into().unwrap()
+        }
 
         match result_id.get(selected_station_int as usize - 1) {
             None => exit_program("Nummeret finns inte! Skriv inte in ID utan numret till vänster."),
