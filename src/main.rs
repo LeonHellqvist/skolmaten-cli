@@ -242,7 +242,7 @@ async fn search(args: &Vec<String>) -> Result<(), Error> {
         };
 
         match result_id.get(selected_station_int as usize - 1) {
-            None => exit_program("Nummeret var utanför gränsen"),
+            None => exit_program("Nummeret finns inte! Skriv inte in ID utan numret till vänster."),
             _ => write_id_file(&result_id[selected_station_int as usize - 1].to_string()),
         }
     }
