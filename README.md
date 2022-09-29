@@ -11,20 +11,25 @@
 <!-- KOMMA IGÅNG -->
 ## Hur man använder
 
-För att välja din matsal måste du ha dess id. För att få fram id kör:
+För att välja din matsal söker du med hjälp av
 ```sh
 skolmaten-cli sök <namn på matsal>
 ```
 Då kommer du få upp en lista av alla matsalar som matchar sin sökning.
-Hitta din matsal och kopiera dess id. Sedan kör detta för att sätta id:
+Välj sedan din matsal i listan.
+
+Alternativt om du vet din matsals id kan du köra följande kommand
 ```sh
 skolmaten-cli id <id>
 ```
-Efter det är det bara att köra detta för att få fram matsedeln:
+Efter det är det bara att köra detta för att få fram matsedeln
 ```sh
 skolmaten-cli
 ```
-
+Alternativt kör detta för att se specifik vecka
+```sh
+skolmaten-cli vecka <veckonummer>
+```
 
 
 <!-- KOMMA IGÅNG -->
