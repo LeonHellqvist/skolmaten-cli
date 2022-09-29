@@ -90,7 +90,7 @@ pub struct Province {
 }
 
 const ID_PATH: &str = "skolmaten-cli-id.txt";
-const HELP_MESSAGE: &str = "Du kan använda funktionerna:\nsök <matsal> - söker efter en matsal\nid <matsals-id> - sätter din matsal från id";
+const HELP_MESSAGE: &str = "Du kan använda funktionerna:\nsök <matsal> - söker efter en matsal\nid <matsals-id> - sätter din matsal från id\nvecka <veckonummer> - visar matsedel för specifik vecka";
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -99,7 +99,7 @@ fn main() {
     if args.len() == 1 {
 
         if fs::metadata(ID_PATH).is_ok() == true {
-            let _print_menu = print_menu();
+            let _print_menu = print_menu(Local::now().iso_week().week());
         } 
 
         if fs::metadata(ID_PATH).is_ok() == false {
@@ -118,6 +118,9 @@ fn main() {
         if query == "id" {
             let _id = set_id(&args);
         }
+        if query == "vecka" {
+            let _vecka = print_menu(args[2].parse::<u32>().unwrap());
+        }
 
         println!("{}", HELP_MESSAGE);
 
@@ -125,7 +128,7 @@ fn main() {
 }
 
 #[tokio::main]
-async fn print_menu() -> Result<(), Error> {
+async fn print_menu(week: u32) -> Result<(), Error> {
     let mut file = fs::File::open(ID_PATH).unwrap();
     let mut contents = String::new();
     file.read_to_string(&mut contents).unwrap();
@@ -135,7 +138,7 @@ async fn print_menu() -> Result<(), Error> {
     let id = contents.trim();
     let req_url = format!(
         "https://skolmaten.se/api/4/menu/?station={}&year={}&weekOfYear={}&count=1",
-        id, local.year(), local.iso_week().week(),
+        id, local.year(), week,
     );
 
     let client = Client::new();
@@ -183,7 +186,7 @@ async fn print_menu() -> Result<(), Error> {
         }
     }
 
-    Ok(())
+    process::exit(0);
 }
 
 #[tokio::main]
@@ -235,7 +238,7 @@ async fn search(args: &Vec<String>) -> Result<(), Error> {
 
         
         if selected_station.as_bytes().len() == 1 { 
-            process::exit(1);
+            process::exit(0);
         }
 
         selected_station = selected_station.chars().filter(|c| c.is_digit(10)).collect();
@@ -252,7 +255,7 @@ async fn search(args: &Vec<String>) -> Result<(), Error> {
             _ => write_id_file(&result_id[selected_station_int as usize - 1].to_string()),
         }
     }
-    process::exit(1);
+    process::exit(0);
 }
 
 fn write_id_file(id: &String) {
@@ -262,7 +265,7 @@ fn write_id_file(id: &String) {
     let mut file = fs::File::create(ID_PATH).expect("create failed");
     file.write_all(id.as_bytes()).expect("write failed");
 
-    process::exit(1);
+    process::exit(0);
 }
 
 fn set_id(args: &Vec<String>) {
@@ -272,7 +275,7 @@ fn set_id(args: &Vec<String>) {
     } else {
         write_id_file(&args[2]);
     }
-    process::exit(1);
+    process::exit(0);
 }
 
 fn exit_program(message: &str) {
