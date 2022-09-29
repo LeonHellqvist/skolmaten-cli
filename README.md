@@ -1,11 +1,11 @@
 <div id="top"></div>
 <div align="center">
 
-<h2 align="center">Skolmaten-cli</h2>
+<h1 align="center">Skolmaten-cli</h1>
 
-  <p align="center">
-    <b>Se matsedeln direkt från terminalen</b>
-  </p>
+  <h4 align="center">
+    Se matsedeln direkt från terminalen
+  </h4>
 </div>
 
 <!-- KOMMA IGÅNG -->
