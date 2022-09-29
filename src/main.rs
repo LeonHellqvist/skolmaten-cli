@@ -90,7 +90,7 @@ pub struct Province {
 }
 
 const ID_PATH: &str = "skolmaten-cli-id.txt";
-const HELP_MESSAGE: &str = "Du kan använda funktionerna:\nsök <matsal> - söker efter en matsal\nid <matsals-id> - sätter din matsal från id";
+const HELP_MESSAGE: &str = "Du kan använda funktionerna:\nsök <matsal> - söker efter en matsal\nid <matsals-id> - sätter din matsal från id\nvecka <veckonummer> - visar matsedel för specifik vecka";
 
 fn main() {
     let args: Vec<String> = env::args().collect();
