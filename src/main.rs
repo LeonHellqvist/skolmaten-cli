@@ -155,9 +155,7 @@ async fn print_menu(week: u8) -> Result<(), Error> {
         .await?;
 
     const DAY_NAMES: [&str; 7] = ["Mån", "Tis", "Ons", "Tor", "Fre", "Lör", "Sön"];
-    let day_today: usize = (local.weekday().number_from_monday() - 1)
-        .try_into()
-        .unwrap();
+    let day_today: usize = (local.weekday().number_from_monday() - 1).try_into().unwrap();
 
     println!("{}", "------------------------------------------".black());
     for week in resp.menu.weeks {
@@ -166,11 +164,9 @@ async fn print_menu(week: u8) -> Result<(), Error> {
             if day.meals.is_some() {
                 for (i, meal) in day.meals.unwrap().into_iter().enumerate() {
                     if i == 0 {
-                        let day_name: ColoredString;
+                        let mut day_name: ColoredString = DAY_NAMES[day_number].blue();
                         if day_number == day_today && week.week_of_year == local.iso_week().week() as u8 {
                             day_name = DAY_NAMES[day_number].bright_blue();
-                        } else {
-                            day_name = DAY_NAMES[day_number].blue();
                         }
                         println!("{}: {}", day_name, meal.value);
                     } else {
