@@ -99,7 +99,7 @@ fn main() {
     if args.len() == 1 {
 
         if fs::metadata(ID_PATH).is_ok() == true {
-            let _print_menu = print_menu(Local::now().iso_week().week());
+            let _print_menu = print_menu(Local::now().iso_week().week().try_into().unwrap());
         } 
 
         if fs::metadata(ID_PATH).is_ok() == false {
@@ -119,7 +119,7 @@ fn main() {
             let _id = set_id(&args);
         }
         if query == "vecka" {
-            let _vecka = print_menu(args[2].parse::<u32>().unwrap());
+            let _vecka = print_menu(args[2].parse::<u8>().unwrap());
         }
 
         println!("{}", HELP_MESSAGE);
@@ -128,7 +128,7 @@ fn main() {
 }
 
 #[tokio::main]
-async fn print_menu(week: u32) -> Result<(), Error> {
+async fn print_menu(week: u8) -> Result<(), Error> {
     let mut file = fs::File::open(ID_PATH).unwrap();
     let mut contents = String::new();
     file.read_to_string(&mut contents).unwrap();
@@ -167,7 +167,7 @@ async fn print_menu(week: u32) -> Result<(), Error> {
                 for (i, meal) in day.meals.unwrap().into_iter().enumerate() {
                     if i == 0 {
                         let day_name: ColoredString;
-                        if day_number == day_today {
+                        if day_number == day_today && week.week_of_year == local.iso_week().week() as u8 {
                             day_name = DAY_NAMES[day_number].bright_blue();
                         } else {
                             day_name = DAY_NAMES[day_number].blue();
