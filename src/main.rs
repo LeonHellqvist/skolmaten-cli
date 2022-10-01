@@ -110,20 +110,14 @@ fn main() {
 
     if args.len() > 1 {
 
-        let query: &String = &args[1];
+	match args[1].as_str() {
 
-        if query == "sök" {
-            let _search = search(&args);
-        }
-        if query == "id" {
-            let _id = set_id(&args);
-        }
-        if query == "vecka" {
-            let _vecka = print_menu(args[2].parse::<u8>().unwrap());
-        }
+	    "sök" => { let _search = search(&args); },
+	    "id" => { let _id = set_id(&args); },
+	    "vecka" => { let _vecka = print_menu(args[2].parse::<u8>().unwrap()); },
+	    _ => println!("{}", HELP_MESSAGE),
 
-        println!("{}", HELP_MESSAGE);
-
+	}
     }
 }
 
