@@ -95,16 +95,13 @@ const HELP_MESSAGE: &str = "Du kan använda funktionerna:\nsök <matsal> - söke
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-
     if args.len() == 1 {
 
         if fs::metadata(ID_PATH).is_ok() == true {
             let _print_menu = print_menu(Local::now().iso_week().week().try_into().unwrap());
         } 
 
-        if fs::metadata(ID_PATH).is_ok() == false {
-            println!("{}", HELP_MESSAGE);
-        }
+        println!("{}", HELP_MESSAGE);
 
     }
 
