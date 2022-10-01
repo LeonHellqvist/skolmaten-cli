@@ -93,12 +93,13 @@ const ID_PATH: &str = "skolmaten-cli-id.txt";
 const HELP_MESSAGE: &str = "Du kan använda funktionerna:\nsök <matsal> - söker efter en matsal\nid <matsals-id> - sätter din matsal från id\nvecka <veckonummer> - visar matsedel för specifik vecka";
 
 fn main() {
+
     let args: Vec<String> = env::args().collect();
 
     if args.len() == 1 {
 
         if fs::metadata(ID_PATH).is_ok() == true {
-            let _print_menu = print_menu(Local::now().iso_week().week().try_into().unwrap());
+            let _print_menu = print_menu(Local::now().iso_week().week() as u8);
         } 
 
         println!("{}", HELP_MESSAGE);
@@ -107,19 +108,20 @@ fn main() {
 
     if args.len() > 1 {
 
-	match args[1].as_str() {
+	    match args[1].as_str() {
 
-	    "sök" => { let _search = search(&args); },
-	    "id" => { let _id = set_id(&args); },
-	    "vecka" => { let _vecka = print_menu(args[2].parse::<u8>().unwrap()); },
-	    _ => println!("{}", HELP_MESSAGE),
+	        "sök" => { let _search = search(&args); },
+	        "id" => { let _id = set_id(&args); },
+	        "vecka" => { let _vecka = print_menu(args[2].parse::<u8>().unwrap()); },
+	        _ => println!("{}", HELP_MESSAGE),
 
-	}
+	    }
     }
 }
 
 #[tokio::main]
 async fn print_menu(week: u8) -> Result<(), Error> {
+
     let mut file = fs::File::open(ID_PATH).unwrap();
     let mut contents = String::new();
     file.read_to_string(&mut contents).unwrap();
@@ -150,7 +152,9 @@ async fn print_menu(week: u8) -> Result<(), Error> {
 
     println!("{}", "------------------------------------------".black());
     for week in resp.menu.weeks {
+
         let mut day_number = 0;
+
         for day in week.days {
             if day.meals.is_some() {
                 for (i, meal) in day.meals.unwrap().into_iter().enumerate() {
@@ -160,20 +164,29 @@ async fn print_menu(week: u8) -> Result<(), Error> {
                             day_name = DAY_NAMES[day_number].bright_blue();
                         }
                         println!("{}: {}", day_name, meal.value);
-                    } else {
+                    }
+
+                    else {
                         println!("     {}", meal.value);
                     }
                 }
-            } else {
+            }
+
+            else {
+
                 let reason = day.reason.unwrap();
                 println!("{}: {}", DAY_NAMES[day_number], reason);
+
             }
+
             println!("{}", "------------------------------------------".black());
             day_number += 1;
+
         }
     }
 
     process::exit(0);
+
 }
 
 #[tokio::main]
@@ -200,13 +213,12 @@ async fn search(args: &Vec<String>) -> Result<(), Error> {
 
         for municipality in resp {
             for station in municipality.s {
-                if (station.n)
-                    .to_lowercase()
-                    .contains(query.to_lowercase().as_str())
-                {
+                if (station.n).to_lowercase().contains(query.to_lowercase().as_str()) {
+
                     result_amount = result_amount + 1;
                     result_id.push(station.i);
                     println!("{}. {}, ID: {}", result_amount, station.n, station.i);
+
                 }
             }
         }
@@ -217,10 +229,7 @@ async fn search(args: &Vec<String>) -> Result<(), Error> {
 
         let mut selected_station = String::new();
 
-        io::stdin().read_line(&mut selected_station)
-            .ok()
-            .expect("Couldn't read line");
-
+        io::stdin().read_line(&mut selected_station).ok().expect("Couldn't read line");
         
         if selected_station.as_bytes().len() == 1 { 
             process::exit(0);
@@ -260,13 +269,18 @@ fn write_id_file(id: &String) {
 }
 
 fn set_id(args: &Vec<String>) {
+
     if args.len() != 3 {
         println!("Du måste ange ett matsals-id");
         println!("Använd: ./skolmaten id <matsals-id>");
-    } else {
+    }
+
+    else {
         write_id_file(&args[2]);
     }
+
     process::exit(0);
+
 }
 
 fn exit_program(message: &str) {
