@@ -109,7 +109,7 @@ fn main() {
 	    match args[1].as_str() {
 
 	        "sök" => { let _search = search(&args); },
-	        "id" => { let _id = set_id(&args); },
+	        "id" => { let _id = set_id(&args[2]); },
 	        "vecka" => { let _vecka = print_menu(args[2].parse::<u8>().unwrap()); },
 	        _ => println!("{}", HELP_MESSAGE),
 
@@ -247,26 +247,19 @@ async fn search(args: &Vec<String>) -> Result<(), Error> {
 
     match result_id.get(selected_station_int as usize - 1) {
         None => exit_program("Nummeret finns inte! Skriv inte in ID utan numret till vänster."),
-        _ => write_id_file(&result_id[selected_station_int as usize - 1].to_string()),
+        _ => set_id(&result_id[selected_station_int as usize - 1].to_string()),
     }
 
 	process::exit(0);
 
 }
 
-fn write_id_file(id: &String) {
+fn set_id(id: &String) {
 
     println!("Sätter din matsal till \"{}\"", id);
 
     let mut file = fs::File::create(ID_PATH).expect("create failed");
     file.write_all(id.as_bytes()).expect("write failed");
-
-    process::exit(0);
-}
-
-fn set_id(args: &Vec<String>) {
-
-    write_id_file(&args[2]);
 
     process::exit(0);
 
