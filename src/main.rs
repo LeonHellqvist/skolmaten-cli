@@ -102,11 +102,9 @@ fn main() {
             let _print_menu = print_menu(Local::now().iso_week().week() as u8);
         } 
 
-        println!("{}", HELP_MESSAGE);
-
     }
 
-    if args.len() > 1 {
+    if args.len() == 3 {
 
 	    match args[1].as_str() {
 
@@ -117,6 +115,10 @@ fn main() {
 
 	    }
     }
+
+    println!("{}", HELP_MESSAGE);
+    process::exit(0);
+
 }
 
 #[tokio::main]
@@ -192,69 +194,63 @@ async fn print_menu(week: u8) -> Result<(), Error> {
 #[tokio::main]
 async fn search(args: &Vec<String>) -> Result<(), Error> {
 
-    if args.len() == 3 {
-        let query: &String = &args[2];
-        println!("Söker efter \"{}\"", query);
-        let client = Client::new();
-        let resp = client
-            .get("https://skolmaten.se/api/4/stations/index/")
-            .header("USER_AGENT", "skolmaten-cli")
-            .header("api-version", "4.0")
-            .header("client-token", "web")
-            .header("client-version-token", "web")
-            .header("locale", "sv-SE")
-            .send()
-            .await?
-            .json::<RootStation>()
-            .await?;
+    let query: &String = &args[2];
+    println!("Söker efter \"{}\"", query);
+    let client = Client::new();
+    let resp = client
+        .get("https://skolmaten.se/api/4/stations/index/")
+        .header("USER_AGENT", "skolmaten-cli")
+        .header("api-version", "4.0")
+        .header("client-token", "web")
+        .header("client-version-token", "web")
+        .header("locale", "sv-SE")
+        .send()
+        .await?
+        .json::<RootStation>()
+        .await?;
 
-        let mut result_amount: u32 = 0;
-        let mut result_id: Vec<i64> = Vec::new();
+    let mut result_amount: u32 = 0;
+    let mut result_id: Vec<i64> = Vec::new();
 
-        for municipality in resp {
-            for station in municipality.s {
-                if (station.n).to_lowercase().contains(query.to_lowercase().as_str()) {
+    for municipality in resp {
+        for station in municipality.s {
+            if (station.n).to_lowercase().contains(query.to_lowercase().as_str()) {
 
-                    result_amount = result_amount + 1;
-                    result_id.push(station.i);
-                    println!("{}. {}, ID: {}", result_amount, station.n, station.i);
+                result_amount = result_amount + 1;
+                result_id.push(station.i);
+                println!("{}. {}, ID: {}", result_amount, station.n, station.i);
 
-                }
             }
         }
-
-        print!("Skriv in ditt matsalsnummer, eller tryck [Enter] för att lämna: ");
-
-        io::stdout().flush().expect("Could not flush stdout");
-
-        let mut selected_station = String::new();
-
-        io::stdin().read_line(&mut selected_station).ok().expect("Couldn't read line");
-        
-        if selected_station.as_bytes().len() == 1 { 
-            process::exit(0);
-        }
-
-        selected_station = selected_station.chars().filter(|c| c.is_digit(10)).collect();
-
-        let mut selected_station_int: u32 = 0;
-
-        match selected_station.parse::<u32>() {
-            Err(_) => exit_program("Nummeret du angav var ogiltigt"),
-            _ => selected_station_int = selected_station.trim().parse::<u32>().unwrap().try_into().unwrap()
-        }
-
-        match result_id.get(selected_station_int as usize - 1) {
-            None => exit_program("Nummeret finns inte! Skriv inte in ID utan numret till vänster."),
-            _ => write_id_file(&result_id[selected_station_int as usize - 1].to_string()),
-        }
-
-	process::exit(0);
-
     }
 
-    println!("Du måste söka på en matsal\nAnvänd: ./skolmaten sök <matsal>");
-    process::exit(1);
+    print!("Skriv in ditt matsalsnummer, eller tryck [Enter] för att lämna: ");
+
+    io::stdout().flush().expect("Could not flush stdout");
+
+    let mut selected_station = String::new();
+
+    io::stdin().read_line(&mut selected_station).ok().expect("Couldn't read line");
+        
+    if selected_station.as_bytes().len() == 1 { 
+        process::exit(0);
+    }
+
+    selected_station = selected_station.chars().filter(|c| c.is_digit(10)).collect();
+
+    let mut selected_station_int: u32 = 0;
+
+    match selected_station.parse::<u32>() {
+        Err(_) => exit_program("Nummeret du angav var ogiltigt"),
+        _ => selected_station_int = selected_station.trim().parse::<u32>().unwrap().try_into().unwrap()
+    }
+
+    match result_id.get(selected_station_int as usize - 1) {
+        None => exit_program("Nummeret finns inte! Skriv inte in ID utan numret till vänster."),
+        _ => write_id_file(&result_id[selected_station_int as usize - 1].to_string()),
+    }
+
+	process::exit(0);
 
 }
 
@@ -270,14 +266,7 @@ fn write_id_file(id: &String) {
 
 fn set_id(args: &Vec<String>) {
 
-    if args.len() != 3 {
-        println!("Du måste ange ett matsals-id");
-        println!("Använd: ./skolmaten id <matsals-id>");
-    }
-
-    else {
-        write_id_file(&args[2]);
-    }
+    write_id_file(&args[2]);
 
     process::exit(0);
 
