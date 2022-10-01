@@ -178,10 +178,8 @@ async fn print_menu(week: u8) -> Result<(), Error> {
 
 #[tokio::main]
 async fn search(args: &Vec<String>) -> Result<(), Error> {
-    if args.len() != 3 {
-        println!("Du måste söka på en matsal");
-        println!("Använd: ./skolmaten sök <matsal>");
-    } else {
+
+    if args.len() == 3 {
         let query: &String = &args[2];
         println!("Söker efter \"{}\"", query);
         let client = Client::new();
@@ -241,8 +239,14 @@ async fn search(args: &Vec<String>) -> Result<(), Error> {
             None => exit_program("Nummeret finns inte! Skriv inte in ID utan numret till vänster."),
             _ => write_id_file(&result_id[selected_station_int as usize - 1].to_string()),
         }
+
+	process::exit(0);
+
     }
-    process::exit(0);
+
+    println!("Du måste söka på en matsal\nAnvänd: ./skolmaten sök <matsal>");
+    process::exit(1);
+
 }
 
 fn write_id_file(id: &String) {
