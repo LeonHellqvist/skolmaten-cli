@@ -95,40 +95,31 @@ const HELP_MESSAGE: &str = "Du kan använda funktionerna:\nsök <matsal> - söke
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-
     if args.len() == 1 {
 
         if fs::metadata(ID_PATH).is_ok() == true {
-            let _print_menu = print_menu(Local::now().iso_week().week());
+            let _print_menu = print_menu(Local::now().iso_week().week().try_into().unwrap());
         } 
 
-        if fs::metadata(ID_PATH).is_ok() == false {
-            println!("{}", HELP_MESSAGE);
-        }
+        println!("{}", HELP_MESSAGE);
 
     }
 
     if args.len() > 1 {
 
-        let query: &String = &args[1];
+	match args[1].as_str() {
 
-        if query == "sök" {
-            let _search = search(&args);
-        }
-        if query == "id" {
-            let _id = set_id(&args);
-        }
-        if query == "vecka" {
-            let _vecka = print_menu(args[2].parse::<u32>().unwrap());
-        }
+	    "sök" => { let _search = search(&args); },
+	    "id" => { let _id = set_id(&args); },
+	    "vecka" => { let _vecka = print_menu(args[2].parse::<u8>().unwrap()); },
+	    _ => println!("{}", HELP_MESSAGE),
 
-        println!("{}", HELP_MESSAGE);
-
+	}
     }
 }
 
 #[tokio::main]
-async fn print_menu(week: u32) -> Result<(), Error> {
+async fn print_menu(week: u8) -> Result<(), Error> {
     let mut file = fs::File::open(ID_PATH).unwrap();
     let mut contents = String::new();
     file.read_to_string(&mut contents).unwrap();
@@ -155,9 +146,7 @@ async fn print_menu(week: u32) -> Result<(), Error> {
         .await?;
 
     const DAY_NAMES: [&str; 7] = ["Mån", "Tis", "Ons", "Tor", "Fre", "Lör", "Sön"];
-    let day_today: usize = (local.weekday().number_from_monday() - 1)
-        .try_into()
-        .unwrap();
+    let day_today: usize = (local.weekday().number_from_monday() - 1).try_into().unwrap();
 
     println!("{}", "------------------------------------------".black());
     for week in resp.menu.weeks {
@@ -166,11 +155,9 @@ async fn print_menu(week: u32) -> Result<(), Error> {
             if day.meals.is_some() {
                 for (i, meal) in day.meals.unwrap().into_iter().enumerate() {
                     if i == 0 {
-                        let day_name: ColoredString;
-                        if day_number == day_today {
+                        let mut day_name: ColoredString = DAY_NAMES[day_number].blue();
+                        if day_number == day_today && week.week_of_year == local.iso_week().week() as u8 {
                             day_name = DAY_NAMES[day_number].bright_blue();
-                        } else {
-                            day_name = DAY_NAMES[day_number].blue();
                         }
                         println!("{}: {}", day_name, meal.value);
                     } else {
@@ -191,10 +178,8 @@ async fn print_menu(week: u32) -> Result<(), Error> {
 
 #[tokio::main]
 async fn search(args: &Vec<String>) -> Result<(), Error> {
-    if args.len() != 3 {
-        println!("Du måste söka på en matsal");
-        println!("Använd: ./skolmaten sök <matsal>");
-    } else {
+
+    if args.len() == 3 {
         let query: &String = &args[2];
         println!("Söker efter \"{}\"", query);
         let client = Client::new();
@@ -254,8 +239,14 @@ async fn search(args: &Vec<String>) -> Result<(), Error> {
             None => exit_program("Nummeret finns inte! Skriv inte in ID utan numret till vänster."),
             _ => write_id_file(&result_id[selected_station_int as usize - 1].to_string()),
         }
+
+	process::exit(0);
+
     }
-    process::exit(0);
+
+    println!("Du måste söka på en matsal\nAnvänd: ./skolmaten sök <matsal>");
+    process::exit(1);
+
 }
 
 fn write_id_file(id: &String) {
