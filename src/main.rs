@@ -150,7 +150,7 @@ async fn print_menu(week: u8) -> Result<(), Error> {
         .await?;
 
     const DAY_NAMES: [&str; 7] = ["Mån", "Tis", "Ons", "Tor", "Fre", "Lör", "Sön"];
-    let day_today: usize = (local.weekday().number_from_monday() - 1).try_into().unwrap();
+    let day_today: usize = (local.weekday().number_from_monday() - 1) as usize;
 
     println!("{}", "------------------------------------------".black());
     for week in resp.menu.weeks {
