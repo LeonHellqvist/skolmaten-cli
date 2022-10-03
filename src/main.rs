@@ -242,7 +242,7 @@ async fn search(args: &Vec<String>) -> Result<(), Error> {
 
     match selected_station.parse::<u32>() {
         Err(_) => exit_program("Nummeret du angav var ogiltigt"),
-        _ => selected_station_int = selected_station.trim().parse::<u32>().unwrap().try_into().unwrap()
+        _ => selected_station_int = selected_station.trim().parse::<u32>().unwrap()
     }
 
     match result_id.get(selected_station_int as usize - 1) {
