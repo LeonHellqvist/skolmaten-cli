@@ -136,8 +136,7 @@ async fn print_menu(week: u8) -> Result<(), Error> {
         id, local.year(), week,
     );
 
-    let client = Client::new();
-    let resp = client
+    let resp = Client::new()
         .get(&req_url)
         .header("USER_AGENT", "skolmaten-cli")
         .header("api-version", "4.0")
@@ -196,8 +195,7 @@ async fn search(args: &Vec<String>) -> Result<(), Error> {
 
     let query: &String = &args[2];
     println!("Söker efter \"{}\"", query);
-    let client = Client::new();
-    let resp = client
+    let resp = Client::new()
         .get("https://skolmaten.se/api/4/stations/index/")
         .header("USER_AGENT", "skolmaten-cli")
         .header("api-version", "4.0")
