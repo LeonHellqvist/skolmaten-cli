@@ -161,13 +161,14 @@ async fn print_menu(week: u8) -> Result<(), Error> {
         let mut day_number = 0;
 
         for day in week.days {
+            let mut day_name: ColoredString = DAY_NAMES[day_number].blue();
+            if day_number == day_today && week.week_of_year == local.iso_week().week() as u8 {
+                day_name = DAY_NAMES[day_number].bright_blue();
+            }
+            
             if day.meals.is_some() {
                 for (i, meal) in day.meals.unwrap().into_iter().enumerate() {
                     if i == 0 {
-                        let mut day_name: ColoredString = DAY_NAMES[day_number].blue();
-                        if day_number == day_today && week.week_of_year == local.iso_week().week() as u8 {
-                            day_name = DAY_NAMES[day_number].bright_blue();
-                        }
                         println!("{}: {}", day_name, meal.value);
                     }
 
@@ -178,10 +179,8 @@ async fn print_menu(week: u8) -> Result<(), Error> {
             }
 
             else {
-
                 let reason = day.reason.unwrap();
-                println!("{}: {}", DAY_NAMES[day_number], reason);
-
+                println!("{}: {}", day_name, reason);
             }
 
             println!("{}", table_divider);
