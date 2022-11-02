@@ -58,11 +58,9 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
    ```sh
    cargo b -r
    ```
-4. Flytta binary till din lokala binary mapp
-  <br><br>
-   UNIX-baserade system & UNIX-liknande system (Linux, MacOS, *BSD)
+4. Installera (frivilligt)
    ```sh
-   sudo mv target/release/skolmaten-cli /usr/local/bin/
+   cargo install --path .
    ```
 
 <p align="right">(<a href="#top">Tillbaka till toppen</a>)</p>
