@@ -1,6 +1,7 @@
 [package]
 name = "skolmaten-cli"
 description = "Se matsedeln direkt från terminalen"
+repository = "https://github.com/LeonHellqvist/skolmaten-cli"
 version = "0.1.0"
 edition = "2021"
 license-file = "LICENSE"
