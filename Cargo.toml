@@ -4,7 +4,7 @@ description = "Se matsedeln direkt från terminalen"
 repository = "https://github.com/LeonHellqvist/skolmaten-cli"
 version = "0.1.0"
 edition = "2021"
-license-file = "LICENSE"
+license = "GPL-3.0"
 
 [profile.release]
 strip = true
