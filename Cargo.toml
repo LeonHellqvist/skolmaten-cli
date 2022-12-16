@@ -2,7 +2,7 @@
 name = "skolmaten-cli"
 description = "Se matsedeln direkt från terminalen"
 repository = "https://github.com/LeonHellqvist/skolmaten-cli"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 license = "GPL-3.0"
 

@@ -151,11 +151,8 @@ async fn print_menu(week: u8) -> Result<(), Error> {
     const DAY_NAMES: [&str; 7] = ["Mån", "Tis", "Ons", "Tor", "Fre", "Lör", "Sön"];
     let day_today: usize = (local.weekday().number_from_monday() - 1) as usize;
 
-    let table_divider: ColoredString = format!("------------------------------------------").black();
-
-    println!("{}", table_divider);
-    println!("{}", format!("Matsedel v.{}", week).bold());
-    println!("{}", table_divider);
+    println!("\n{}\n", format!("Matsedel v.{}", week).bold());
+    
     for week in resp.menu.weeks {
 
         let mut day_number = 0;
@@ -183,7 +180,8 @@ async fn print_menu(week: u8) -> Result<(), Error> {
                 println!("{}: {}", day_name, reason);
             }
 
-            println!("{}", table_divider);
+            println!("");
+
             day_number += 1;
 
         }

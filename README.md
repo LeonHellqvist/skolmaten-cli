@@ -43,6 +43,10 @@ Om du inte redan har Rust så måste du installera det först
 ```sh
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
+Just nu behöver du även ändra rust till nightly versionen
+```
+rustup default nightly
+```
 
 ### Installation
 
