@@ -157,12 +157,12 @@ async fn search(args: &Vec<String>) -> Result<(), Error> {
     let mut selected_station_int: u32 = 0;
 
     match selected_station.parse::<u32>() {
-        Err(_) => exit_program("Nummeret du angav var ogiltigt"),
+        Err(_) => exit_program("Numret du angav var ogiltigt"),
         _ => selected_station_int = selected_station.trim().parse::<u32>().unwrap()
     }
 
     match result_id.get(selected_station_int as usize - 1) {
-        None => exit_program("Nummeret finns inte! Skriv inte in ID utan numret till vänster."),
+        None => exit_program("Numret finns inte! Skriv inte in ID, utan numret till vänster."),
         _ => set_id(&result_id[selected_station_int as usize - 1].to_string()),
     }
 
