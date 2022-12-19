@@ -5,6 +5,11 @@ repository = "https://github.com/LeonHellqvist/skolmaten-cli"
 version = "0.1.2"
 edition = "2021"
 license = "GPL-3.0"
+readme = "README.md"
+
+[package.metadata.deb]
+"maintainer" = "Erik Dahlqvist"
+"copyright" = "Erik Dahlqvist, Leon Hellqvist"
 
 [profile.release]
 strip = true
